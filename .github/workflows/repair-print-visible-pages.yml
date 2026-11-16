@@ -1,0 +1,96 @@
+name: Repair female portfolio Safari print to 23 pages
+on:
+  push:
+    paths:
+      - '.github/workflows/repair-print-visible-pages.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Print the existing 23 visible A4 sheets
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          start=s.index('@page{size:A4 portrait;margin:0}')
+          end=s.index('</style>',start)
+          css=r'''@page{size:A4 portrait;margin:0}
+          @media print{
+            html,body{
+              margin:0!important;
+              padding:0!important;
+              background:#fff!important;
+              -webkit-print-color-adjust:exact!important;
+              print-color-adjust:exact!important;
+            }
+            header,.notice,.controls,.caption,.print-root,input[type=file]{
+              display:none!important;
+            }
+            main,#pages{
+              display:block!important;
+              width:210mm!important;
+              max-width:none!important;
+              margin:0!important;
+              padding:0!important;
+            }
+            #pages>.sheet{
+              display:block!important;
+              position:relative!important;
+              box-sizing:border-box!important;
+              width:210mm!important;
+              height:297mm!important;
+              min-height:297mm!important;
+              max-height:297mm!important;
+              margin:0!important;
+              padding:0!important;
+              border:0!important;
+              box-shadow:none!important;
+              overflow:hidden!important;
+              break-inside:avoid!important;
+              page-break-inside:avoid!important;
+              break-after:page!important;
+              page-break-after:always!important;
+            }
+            #pages>.sheet:last-child{
+              break-after:auto!important;
+              page-break-after:auto!important;
+            }
+            #pages>.sheet>.page{
+              display:block!important;
+              position:relative!important;
+              box-sizing:border-box!important;
+              width:210mm!important;
+              height:297mm!important;
+              min-height:297mm!important;
+              max-height:297mm!important;
+              aspect-ratio:auto!important;
+              overflow:hidden!important;
+            }
+            #pages>.sheet>.page>img.bg{
+              display:block!important;
+              width:100%!important;
+              height:100%!important;
+              object-fit:fill!important;
+            }
+            .tile button{display:none!important}
+          }
+          '''
+          new=s[:start]+css+s[end:]
+          assert new.count('const backgrounds=')==1
+          assert 'function makePage(i,print=false)' in new
+          assert len(new)>4_000_000
+          p.write_text(new,encoding='utf-8')
+          print('Updated print CSS only; 23 existing pages retained.')
+          PY
+      - name: Commit repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Print the 23 visible A4 sheets in Safari"
+          git push
