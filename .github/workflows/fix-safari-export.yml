@@ -1,0 +1,62 @@
+name: Fix Safari evidence export
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-safari-export.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Safari share and backup options
+        run: |
+          cat > /tmp/patch.py <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          tag='<!-- safari-export-fix-v1 -->'
+          if tag not in s:
+              js=r"""<script id="safari-export-fix">
+          (function(){
+          const button=document.getElementById('backup');
+          if(!button)return;
+          const KEY='female-portfolio-evidence-v1';
+          const style=document.createElement('style');
+          style.textContent='#evidence-export-panel{position:fixed;inset:0;background:#0009;z-index:99999;display:none;align-items:center;justify-content:center;padding:15px}#evidence-export-panel .panel{background:white;color:#292035;max-width:520px;width:100%;border-radius:12px;padding:18px;direction:rtl;text-align:right;max-height:90vh;overflow:auto}#evidence-export-panel button{padding:10px 14px;margin:5px;border:1px solid #9474a6;border-radius:8px;background:#f6e8ff;color:#281b35}#evidence-export-panel textarea{width:100%;height:110px;direction:ltr;font-size:11px}';
+          document.head.append(style);
+          const overlay=document.createElement('div');overlay.id='evidence-export-panel';
+          overlay.innerHTML='<div class="panel"><h3>حفظ نسخة من الشواهد</h3><p>اختاري «مشاركة الملف» ثم «حفظ في الملفات». إذا لم تظهر قائمة المشاركة، استخدمي «تنزيل الملف».</p><div id="export-actions"></div><p id="export-status"></p><details><summary>نسخة نصية احتياطية</summary><textarea readonly id="export-text"></textarea><button type="button" id="export-copy">نسخ البيانات</button></details><button type="button" id="export-close">إغلاق</button></div>';
+          document.body.append(overlay);
+          const actions=overlay.querySelector('#export-actions'),status=overlay.querySelector('#export-status'),txt=overlay.querySelector('#export-text');
+          overlay.querySelector('#export-close').onclick=()=>overlay.style.display='none';
+          overlay.querySelector('#export-copy').onclick=async()=>{txt.select();try{await navigator.clipboard.writeText(txt.value);status.textContent='تم نسخ البيانات'}catch(e){document.execCommand('copy');status.textContent='تم تحديد البيانات للنسخ'}};
+          button.onclick=()=>{
+           let state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){status.textContent='تعذر قراءة الشواهد المحفوظة'}
+           const json=JSON.stringify({format:'female-portfolio-evidence',version:1,state});
+           const file=new File([json],'شواهد-الإنجاز-النسائي.json',{type:'application/json'});
+           txt.value=json;actions.replaceChildren();overlay.style.display='flex';status.textContent='الشواهد جاهزة للحفظ ('+Object.values(state).reduce((n,a)=>n+(Array.isArray(a)?a.length:0),0)+' صور)';
+           const share=document.createElement('button');share.textContent='مشاركة الملف / حفظ في الملفات';
+           share.onclick=()=>{if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){navigator.share({files:[file],title:'نسخة الشواهد'}).catch(e=>{if(e.name!=='AbortError')status.textContent='المشاركة غير متاحة؛ استخدمي تنزيل الملف'})}else status.textContent='المشاركة غير متاحة؛ استخدمي تنزيل الملف'};
+           actions.append(share);
+           const download=document.createElement('button');download.textContent='تنزيل الملف';
+           download.onclick=()=>{const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();status.textContent='إذا لم يبدأ التنزيل، اضغطي مشاركة الملف';setTimeout(()=>URL.revokeObjectURL(url),60000)};
+           actions.append(download);
+          };
+          })();
+          </script>"""
+              s=s.replace('</body>',tag+js+'</body>',1)
+              assert len(s)>4000000 and s.count(tag)==1
+              p.write_text(s,encoding='utf-8')
+          print('Safari export panel installed')
+          PY
+          python3 /tmp/patch.py
+      - name: Commit export fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Fix iOS Safari evidence backup with native file sharing"
+          git push
