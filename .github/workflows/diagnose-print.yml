@@ -17,7 +17,7 @@ jobs:
           from pathlib import Path
           import re
           s=Path('index.html').read_text()
-          out=['File bytes: '+str(len(s))]
+          out=['File bytes: '+str(len(s)), 'GESTURE='+str('evidence-gesture-controls-v1' in s)]
           out.append('STYLE='+s[s.index('<style>'):s.index('</style>')+8])
           out.append('SCRIPT_TAIL='+s[-6500:])\n          for token in ['@media print','@page','function makePage','function print','print-root','id="pages"','window.print','const backgrounds=']:
             matches=list(re.finditer(re.escape(token),s))
