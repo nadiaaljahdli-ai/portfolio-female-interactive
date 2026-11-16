@@ -18,7 +18,7 @@ jobs:
           import re
           s=Path('index.html').read_text()
           out=['File bytes: '+str(len(s))]
-          for token in ['@media print','@page','function makePage','function print','print-root','id="pages"','window.print','const backgrounds=']:
+          out.append('STYLE='+s[s.index('<style>'):s.index('</style>')+8])\n          out.append('SCRIPT_TAIL='+s[-6500:])\n          for token in ['@media print','@page','function makePage','function print','print-root','id="pages"','window.print','const backgrounds=']:
             matches=list(re.finditer(re.escape(token),s))
             out.append('\n'+token+' count='+str(len(matches)))
             for m in matches[-4:]:
