@@ -1,0 +1,83 @@
+name: Add editable evidence image gestures
+on:
+  push:
+    paths:
+      - '.github/workflows/add-evidence-gesture-controls.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add image pinch zoom and drag
+        env:
+          PATCH: |
+            from pathlib import Path
+            p=Path('index.html')
+            s=p.read_text(encoding='utf-8')
+            tag='<!-- evidence-gesture-controls-v1 -->'
+            if tag not in s:
+                css="""<style id="evidence-gesture-style">
+            @media screen {
+             .slot .tile{position:relative;overflow:hidden;touch-action:pan-y}
+             .slot .tile>img{touch-action:none;user-select:none;-webkit-user-select:none;transform-origin:center center;cursor:grab}
+             .slot .tile>img:active{cursor:grabbing}
+             .evidence-zoom{position:absolute;bottom:2px;left:2px;z-index:10;display:flex;gap:3px}
+             .evidence-zoom button{background:#fff;color:#242424;border:1px solid #bca9c5;border-radius:5px;font-size:15px;min-width:25px;min-height:25px;padding:0 3px}
+            }
+            @media print{.evidence-zoom{display:none!important}}
+            </style>"""
+                js=r"""<script id="evidence-gesture-script">
+            (()=>{
+             const KEY='portfolio-evidence-transforms-v1';
+             let saved={};try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
+             const key=im=>{const t=im.closest('.tile'),slot=im.closest('.slot'),sheet=im.closest('.sheet');if(!t||!slot||!sheet)return null;const slots=[...sheet.querySelectorAll('.slot')];const tiles=[...slot.querySelectorAll('.tile')];const sheets=[...sheet.parentElement.querySelectorAll('.sheet')];return [sheets.indexOf(sheet),slots.indexOf(slot),tiles.indexOf(t),im.getAttribute('src')?.length||0].join(':')};
+             function apply(im,v){im.style.transform='translate('+v.x+'px,'+v.y+'px) scale('+v.z+')';}
+             function install(im){
+              if(im.dataset.gestureReady)return;
+              im.dataset.gestureReady='1';
+              const k=key(im);if(!k)return;
+              let v=saved[k]||{x:0,y:0,z:1};apply(im,v);
+              const save=()=>{saved[k]={...v};try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}};
+              const pts=new Map();let anchor=null;
+              const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+              im.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;e.preventDefault();im.setPointerCapture?.(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});anchor=null;});
+              im.addEventListener('pointermove',e=>{
+               if(!pts.has(e.pointerId))return;e.preventDefault();
+               const prev=[...pts.values()];pts.set(e.pointerId,{x:e.clientX,y:e.clientY});const now=[...pts.values()];
+               if(now.length===1){v.x+=now[0].x-prev[0].x;v.y+=now[0].y-prev[0].y;}
+               else if(now.length>=2){const a=dist(prev[0],prev[1]),b=dist(now[0],now[1]);if(a>0)v.z=Math.max(.25,Math.min(5,v.z*b/a));v.x+=((now[0].x+now[1].x)-(prev[0].x+prev[1].x))/2;v.y+=((now[0].y+now[1].y)-(prev[0].y+prev[1].y))/2;}
+               apply(im,v);save();
+              });
+              for(const ev of ['pointerup','pointercancel','lostpointercapture'])im.addEventListener(ev,e=>{pts.delete(e.pointerId);save()});
+              im.addEventListener('wheel',e=>{if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();v.z=Math.max(.25,Math.min(5,v.z*(e.deltaY<0?1.08:.92)));apply(im,v);save()},{passive:false});
+              const tile=im.closest('.tile');if(tile&&!tile.querySelector('.evidence-zoom')){
+               const bar=document.createElement('div');bar.className='evidence-zoom';
+               for(const [label,fn] of [['+',()=>v.z=Math.min(5,v.z*1.15)],['−',()=>v.z=Math.max(.25,v.z/1.15)],['↺',()=>{v={x:0,y:0,z:1}}]]){
+                const b=document.createElement('button');b.type='button';b.textContent=label;b.title=label==='+'?'تكبير الصورة':label==='−'?'تصغير الصورة':'إعادة ضبط الصورة';b.addEventListener('click',e=>{e.stopPropagation();fn();apply(im,v);save()});bar.append(b);
+               }tile.append(bar);
+              }
+             }
+             const sync=()=>{document.querySelectorAll('#pages .slot .tile>img').forEach(install);document.querySelectorAll('#printRoot .slot .tile>img').forEach(im=>{const k=key(im);if(k&&saved[k])apply(im,saved[k]);});};
+             new MutationObserver(sync).observe(document.body,{childList:true,subtree:true});sync();
+             window.addEventListener('beforeprint',sync);
+            })();
+            </script>"""
+                s=s.replace('</head>',css+'</head>',1)
+                s=s.replace('</body>',tag+js+'</body>',1)
+                assert s.count(tag)==1 and len(s)>4_000_000
+                p.write_text(s,encoding='utf-8')
+            print('Evidence gestures installed without changing page backgrounds')
+            
+        run: |
+          printf '%s\n' "$PATCH" > /tmp/patch.py
+          python3 /tmp/patch.py
+      - name: Commit enhancement
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Enable evidence pinch zoom drag and saved positions"
+          git push
