@@ -1,0 +1,47 @@
+name: Repair female portfolio print pagination
+on:
+  push:
+    paths:
+      - '.github/workflows/repair-print-pagination.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Consolidate iOS print CSS without changing page assets or scripts
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          start=s.index('@page{size:A4 portrait;margin:0}')
+          end=s.index('</style>',start)
+          css="""@page{size:A4 portrait;margin:0}
+          @media print{
+            html,body{margin:0!important;padding:0!important;width:auto!important;height:auto!important;overflow:visible!important;background:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+            header,main{display:none!important}
+            .print-root{display:block!important;position:static!important;left:auto!important;top:auto!important;width:100%!important;height:auto!important;margin:0!important;padding:0!important;overflow:visible!important;pointer-events:none!important}
+            .print-root .sheet{display:block!important;position:relative!important;box-sizing:border-box!important;width:202mm!important;height:285mm!important;min-height:0!important;max-height:285mm!important;margin:0 auto!important;padding:0!important;border:0!important;box-shadow:none!important;overflow:hidden!important;break-inside:avoid!important;page-break-inside:avoid!important;break-before:auto!important;page-break-before:auto!important;break-after:page!important;page-break-after:always!important}
+            .print-root .sheet:last-child{break-after:auto!important;page-break-after:auto!important}
+            .print-root .page{display:block!important;position:relative!important;box-sizing:border-box!important;width:202mm!important;height:285mm!important;min-height:0!important;max-height:285mm!important;aspect-ratio:auto!important;overflow:hidden!important}
+            .print-root .page>img.bg{display:block!important;width:100%!important;height:100%!important;object-fit:fill!important}
+            .print-root .tile button{display:none!important}
+          }
+          """
+          updated=s[:start]+css+s[end:]
+          assert updated.count('const backgrounds=')==1
+          assert updated.count('function makePage(')==1
+          assert len(updated)>4_000_000
+          p.write_text(updated,encoding='utf-8')
+          print('Replaced conflicting print CSS. Existing embedded 23 pages and scripts preserved.')
+          PY
+      - name: Commit print-only repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Consolidate Safari iOS print pagination CSS"
+          git push
