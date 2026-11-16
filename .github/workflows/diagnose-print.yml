@@ -19,7 +19,8 @@ jobs:
           s=Path('index.html').read_text()
           out=['File bytes: '+str(len(s)), 'GESTURE_V1='+str('evidence-gesture-controls-v1' in s), 'GESTURE_V2='+str('evidence-gesture-controls-v2' in s), 'LOCAL_KEYS='+str(__import__('re').findall(r'localStorage\\.getItem\\([^)]*\\)',s[-18000:]))]
           out.append('STYLE='+s[s.index('<style>'):s.index('</style>')+8])
-          out.append('SCRIPT_TAIL='+s[-16000:])\n          for token in ['@media print','@page','function makePage','function print','print-root','id="pages"','window.print','const backgrounds=']:
+          out.append('SCRIPT_TAIL='+s[-16000:])
+          for token in ['@media print','@page','function makePage','function print','print-root','id="pages"','window.print','const backgrounds=']:
             matches=list(re.finditer(re.escape(token),s))
             out.append('\n'+token+' count='+str(len(matches)))
             for m in matches[-4:]:
