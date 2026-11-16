@@ -33,7 +33,7 @@ jobs:
             }
             main,#pages{
               display:block!important;
-              width:200mm!important;
+              width:190mm!important;
               max-width:none!important;
               margin:0!important;
               padding:0!important;
@@ -42,10 +42,10 @@ jobs:
               display:block!important;
               position:relative!important;
               box-sizing:border-box!important;
-              width:200mm!important;
-              height:280mm!important;
-              min-height:280mm!important;
-              max-height:280mm!important;
+              width:190mm!important;
+              height:267mm!important;
+              min-height:267mm!important;
+              max-height:267mm!important;
               margin:0 auto!important;
               padding:0!important;
               border:0!important;
@@ -53,10 +53,10 @@ jobs:
               overflow:hidden!important;
               break-inside:avoid!important;
               page-break-inside:avoid!important;
-              break-after:page!important;
-              page-break-after:always!important;
+              break-after:auto!important;
+              page-break-after:auto!important;
             }
-            #pages>.sheet:last-child{
+            #pages>.sheet + .sheet{break-before:page!important;page-break-before:always!important}\n            #pages>.sheet:last-child{
               break-after:auto!important;
               page-break-after:auto!important;
             }
@@ -64,10 +64,10 @@ jobs:
               display:block!important;
               position:relative!important;
               box-sizing:border-box!important;
-              width:200mm!important;
-              height:280mm!important;
-              min-height:280mm!important;
-              max-height:280mm!important;
+              width:190mm!important;
+              height:267mm!important;
+              min-height:267mm!important;
+              max-height:267mm!important;
               aspect-ratio:auto!important;
               overflow:hidden!important;
             }
