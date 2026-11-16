@@ -17,11 +17,12 @@ jobs:
           from pathlib import Path
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          tag='<script src="./trainee-identity.js" defer></script>'
-          if tag not in s:
-              assert '</body>' in s
-              s=s.replace('</body>',tag+'\n</body>',1)
-              p.write_text(s,encoding='utf-8')
+          import re
+          s=re.sub(r'<script src="\./trainee-identity\\.js(?:\\?v=[^\"]*)?" defer></script>', '', s)
+          tag='<script src="./trainee-identity.js?v=female-cover-2" defer></script>'
+          assert '</body>' in s
+          s=s.replace('</body>',tag+'\n</body>',1)
+          p.write_text(s,encoding='utf-8')
           assert tag in p.read_text(encoding='utf-8')
           print('Identity editor script linked')
           PY
