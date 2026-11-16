@@ -21,63 +21,13 @@ jobs:
           end=s.index('</style>',start)
           css=r'''@page{size:A4 portrait;margin:0}
           @media print{
-            html,body{
-              margin:0!important;
-              padding:0!important;
-              background:#fff!important;
-              -webkit-print-color-adjust:exact!important;
-              print-color-adjust:exact!important;
-            }
-            header,.notice,.controls,.caption,.print-root,input[type=file]{
-              display:none!important;
-            }
-            main,#pages{
-              display:block!important;
-              width:190mm!important;
-              max-width:none!important;
-              margin:0!important;
-              padding:0!important;
-            }
-            #pages>.sheet{
-              display:block!important;
-              position:relative!important;
-              box-sizing:border-box!important;
-              width:190mm!important;
-              height:267mm!important;
-              min-height:267mm!important;
-              max-height:267mm!important;
-              margin:0 auto!important;
-              padding:0!important;
-              border:0!important;
-              box-shadow:none!important;
-              overflow:hidden!important;
-              break-inside:avoid!important;
-              page-break-inside:avoid!important;
-              break-after:auto!important;
-              page-break-after:auto!important;
-            }
-            #pages>.sheet + .sheet{break-before:page!important;page-break-before:always!important}\n            #pages>.sheet:last-child{
-              break-after:auto!important;
-              page-break-after:auto!important;
-            }
-            #pages>.sheet>.page{
-              display:block!important;
-              position:relative!important;
-              box-sizing:border-box!important;
-              width:190mm!important;
-              height:267mm!important;
-              min-height:267mm!important;
-              max-height:267mm!important;
-              aspect-ratio:auto!important;
-              overflow:hidden!important;
-            }
-            #pages>.sheet>.page>img.bg{
-              display:block!important;
-              width:100%!important;
-              height:100%!important;
-              object-fit:fill!important;
-            }
-            #pages>.sheet:last-child{break-after:auto!important;page-break-after:auto!important}
+            html,body{margin:0!important;padding:0!important;background:white!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+            header,main,.notice,.controls,.caption,input[type=file]{display:none!important}
+            .print-root{display:block!important;position:static!important;width:100%!important;height:auto!important;margin:0!important;padding:0!important;overflow:visible!important}
+            .print-root>.sheet{display:block!important;position:relative!important;box-sizing:border-box!important;width:190mm!important;height:267mm!important;min-height:267mm!important;max-height:267mm!important;margin:0 auto!important;padding:0!important;border:0!important;box-shadow:none!important;overflow:hidden!important;break-inside:avoid!important;page-break-inside:avoid!important;break-after:auto!important;page-break-after:auto!important}
+            .print-root>.sheet+.sheet{break-before:page!important;page-break-before:always!important}
+            .print-root>.sheet>.page{display:block!important;position:relative!important;box-sizing:border-box!important;width:190mm!important;height:267mm!important;min-height:267mm!important;max-height:267mm!important;aspect-ratio:auto!important;overflow:hidden!important}
+            .print-root>.sheet>.page>img.bg{display:block!important;width:100%!important;height:100%!important;object-fit:fill!important}
             .tile button{display:none!important}
           }
           '''
@@ -85,6 +35,9 @@ jobs:
           assert new.count('const backgrounds=')==1
           assert 'function makePage(i,print=false)' in new
           assert len(new)>4_000_000
+          marker="window.print()"
+          assert new.count(marker)==1
+          new=new.replace(marker,"printRoot.innerHTML='';for(let i=0;i<backgrounds.length;i++)printRoot.append(makePage(i,true));await Promise.all([...printRoot.querySelectorAll('img')].map(im=>im.decode?.().catch(()=>{})||Promise.resolve()));window.print()")
           p.write_text(new,encoding='utf-8')
           print('Updated print CSS only; 23 existing pages retained.')
           PY
