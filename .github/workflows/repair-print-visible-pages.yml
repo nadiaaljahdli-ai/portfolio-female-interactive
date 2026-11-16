@@ -24,9 +24,9 @@ jobs:
             html,body{margin:0!important;padding:0!important;background:white!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
             header,main,.notice,.controls,.caption,input[type=file]{display:none!important}
             .print-root{display:block!important;position:static!important;width:100%!important;height:auto!important;margin:0!important;padding:0!important;overflow:visible!important}
-            .print-root>.sheet{display:block!important;position:relative!important;box-sizing:border-box!important;width:190mm!important;height:267mm!important;min-height:267mm!important;max-height:267mm!important;margin:0 auto!important;padding:0!important;border:0!important;box-shadow:none!important;overflow:hidden!important;break-inside:avoid!important;page-break-inside:avoid!important;break-after:auto!important;page-break-after:auto!important}
+            .print-root>.sheet{display:block!important;position:relative!important;box-sizing:border-box!important;width:175mm!important;height:245mm!important;min-height:245mm!important;max-height:245mm!important;margin:0 auto!important;padding:0!important;border:0!important;box-shadow:none!important;overflow:hidden!important;break-inside:avoid!important;page-break-inside:avoid!important;break-after:auto!important;page-break-after:auto!important}
             .print-root>.sheet+.sheet{break-before:page!important;page-break-before:always!important}
-            .print-root>.sheet>.page{display:block!important;position:relative!important;box-sizing:border-box!important;width:190mm!important;height:267mm!important;min-height:267mm!important;max-height:267mm!important;aspect-ratio:auto!important;overflow:hidden!important}
+            .print-root>.sheet>.page{display:block!important;position:relative!important;box-sizing:border-box!important;width:175mm!important;height:245mm!important;min-height:245mm!important;max-height:245mm!important;aspect-ratio:auto!important;overflow:hidden!important}
             .print-root>.sheet>.page>img.bg{display:block!important;width:100%!important;height:100%!important;object-fit:fill!important}
             .tile button{display:none!important}
           }
