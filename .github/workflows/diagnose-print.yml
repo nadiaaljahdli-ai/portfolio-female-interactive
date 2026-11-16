@@ -1,0 +1,34 @@
+name: Diagnose portfolio print layout
+on:
+  push:
+    paths:
+      - '.github/workflows/diagnose-print.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract layout structure
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text()
+          out=['File bytes: '+str(len(s))]
+          for token in ['@media print','@page','function makePage','function print','print-root','id="pages"','window.print','const backgrounds=']:
+            matches=list(re.finditer(re.escape(token),s))
+            out.append('\n'+token+' count='+str(len(matches)))
+            for m in matches[-4:]:
+              out.append(s[max(0,m.start()-250):min(len(s),m.end()+650)].replace('\n',' ')[:950])
+          Path('print-diagnostic.txt').write_text('\n'.join(out))
+          PY
+      - name: Commit diagnostic
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add print-diagnostic.txt
+          git diff --cached --quiet || git commit -m "Record print layout diagnostic"
+          git push
