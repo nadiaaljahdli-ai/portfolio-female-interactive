@@ -28,7 +28,7 @@ css.textContent=`
 document.head.append(css);
 let coverSize=18;try{coverSize=Math.max(12,Math.min(30,Number(localStorage.getItem('female-cover-size')||18)))}catch(e){}document.documentElement.style.setProperty('--female-cover-size',coverSize+'px');
 const fontTools=document.createElement('div');fontTools.id='female-font-tools';fontTools.innerHTML='<span>حجم خط الغلاف</span><button type="button" aria-label="تكبير">+</button><button type="button" aria-label="تصغير">−</button>';document.body.append(fontTools);const changeSize=d=>{coverSize=Math.max(12,Math.min(30,coverSize+d));document.documentElement.style.setProperty('--female-cover-size',coverSize+'px');try{localStorage.setItem('female-cover-size',coverSize)}catch(e){}};fontTools.querySelectorAll('button')[0].onclick=()=>changeSize(2);fontTools.querySelectorAll('button')[1].onclick=()=>changeSize(-2);
-const open=document.createElement('button');open.id='identity-open';open.type='button';open.textContent='بياناتي';document.body.append(open);
+const open=document.createElement('button');open.id='identity-open';open.type='button';open.textContent='بياناتي';document.body.append(open);open.remove();
 const panel=document.createElement('div');panel.id='identity-panel';
 panel.innerHTML='<div class="identity-inner"><h3>بيانات المتدرب / المتدربة</h3><p>تظهر بيانات الاسم والمدرسة على الغلاف، وتظهر البيانات المهنية في صفحة البيانات الشخصية.</p><div id="identity-fields"></div><label>رقم صفحة البيانات الشخصية<select id="identity-page"></select></label><button id="identity-save" type="button">حفظ البيانات</button><button id="identity-close" type="button">إغلاق</button></div>';
 document.body.append(panel);
