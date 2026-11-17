@@ -13,7 +13,7 @@ css.textContent=`
 #identity-panel button{border:0;background:#624b7a;color:white;padding:11px 18px;border-radius:8px;margin:8px 5px 0}
 .identity-text{position:absolute;z-index:10;direction:rtl;text-align:center;pointer-events:none;color:#302639;font-family:Arial,sans-serif;line-height:1.4;text-shadow:0 1px 2px #fff9;white-space:pre-wrap;overflow-wrap:anywhere}
 .identity-cover{display:none!important}
-.female-cover-fields{position:absolute;z-index:20;left:18%;bottom:39.8%;width:64%;height:13.2%;display:flex;flex-direction:column;justify-content:center;gap:8%;padding:1.5% 3%;background:#f4e5f2;border:1px solid #d3ad70;border-radius:22px;box-sizing:border-box;direction:rtl}
+.female-cover-fields{position:absolute;z-index:20;left:16%;bottom:37.5%;width:68%;height:17%;display:flex;flex-direction:column;justify-content:center;gap:8%;padding:1.5% 3%;background:#f4e5f2;border:1px solid #d3ad70;border-radius:22px;box-sizing:border-box;direction:rtl}
 .female-cover-pill{display:flex;align-items:center;gap:3%;height:43%;padding:0 4%;border-radius:999px;background:white;border:1px solid #d3ad70;box-sizing:border-box;overflow:hidden}
 .female-cover-label{flex:0 0 auto;font-family:Tahoma,Arial,sans-serif;color:#59416b;font-size:clamp(17px,3.4vw,25px);font-weight:700;white-space:nowrap}
 .female-cover-value{flex:1;min-width:0;direction:rtl;text-align:right;color:#59416b;font-family:Tahoma,Arial,sans-serif;font-size:var(--female-cover-size,18px);font-weight:700;white-space:nowrap;overflow:hidden;outline:0}
