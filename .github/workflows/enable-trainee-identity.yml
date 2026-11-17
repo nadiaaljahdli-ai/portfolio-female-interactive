@@ -19,7 +19,7 @@ jobs:
           s=p.read_text(encoding='utf-8')
           import re
           s=re.sub(r'<script[^>]+src="[^"]*trainee-identity[.]js[^"]*"[^>]*></script>', '', s)
-          tag='<script src="./trainee-identity.js?v=female-cover-5" defer></script>'
+          tag='<script src="./trainee-identity.js?v=female-cover-6" defer></script>'
           assert '</body>' in s
           s=s.replace('</body>',tag+'\n</body>',1)
           p.write_text(s,encoding='utf-8')
