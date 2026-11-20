@@ -20,9 +20,9 @@ const repairStyle=document.createElement('style');repairStyle.textContent=`
 @page{size:A4 portrait;margin:0}
 html,body{width:auto!important;margin:0!important;padding:0!important}
 .print-root{display:block!important;width:100%!important;margin:0!important;padding:0!important}
-.print-root>.sheet{width:175mm!important;height:245mm!important;min-height:245mm!important;max-height:245mm!important;margin:0 auto!important;padding:0!important;break-before:auto!important;page-break-before:auto!important;break-after:auto!important;page-break-after:auto!important;overflow:hidden!important}
+.print-root>.sheet{width:165mm!important;height:233mm!important;min-height:233mm!important;max-height:233mm!important;margin:0 auto!important;padding:0!important;break-before:auto!important;page-break-before:auto!important;break-after:auto!important;page-break-after:auto!important;overflow:hidden!important}
 .print-root>.sheet+.sheet{break-before:page!important;page-break-before:always!important}
-.print-root>.sheet>.page{width:175mm!important;height:245mm!important;min-height:245mm!important;max-height:245mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
+.print-root>.sheet>.page{width:165mm!important;height:233mm!important;min-height:233mm!important;max-height:233mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
 .female-extra .extra-remove{display:none!important}
 }
 `;document.head.append(repairStyle);
