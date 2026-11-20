@@ -50,3 +50,5 @@ panel.querySelector('#identity-save').onclick=()=>{fields.forEach(([k])=>data[k]
 let pending=false;const observer=new MutationObserver(mutations=>{if(pending)return;if(!mutations.some(m=>[...m.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('.sheet')||n.querySelector?.('.sheet')))))return;pending=true;requestAnimationFrame(()=>{pending=false;update()})});
 observer.observe(document.body,{childList:true,subtree:true});update();window.addEventListener('beforeprint',update);
 })();
+/* Load the five supplemental portfolio pages without modifying the large original index.html. */
+(()=>{if(document.querySelector('script[data-female-extras-loader]'))return;const s=document.createElement('script');s.src='./female-extra-pages.js';s.dataset.femaleExtrasLoader='true';document.body.appendChild(s)})();
