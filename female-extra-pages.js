@@ -13,8 +13,11 @@ function ensureRemove(slot,id,i){let b=slot.querySelector('.extra-remove');if(!b
 function mount(){const pages=document.getElementById('pages');if(!pages)return;pages.querySelectorAll('.female-extra').forEach(x=>x.remove());const sheets=[...pages.querySelectorAll(':scope > .sheet:not(.female-extra)')];if(sheets.length!==23)return;const personal=build(defs[0]);sheets[1].after(personal);const closing=sheets[22];defs.slice(1).forEach(def=>closing.before(build(def)));document.getElementById('status')?.setAttribute('title','٢٨ صفحة: ٢٣ أصلية و٥ إضافية')}
 const previousRender=render;render=function(){previousRender();mount()};mount();
 const repairStyle=document.createElement('style');repairStyle.textContent=`
-.female-extra .extra-cover{position:absolute;top:13%;left:11%;width:78%;height:29%;background:#f8e9f5;border-radius:18px;z-index:1}
-.female-extra .extra-title{top:15%;right:15%;height:11%;border-radius:24px;background:#dcc5df;color:#744a7a;font-family:'Tajawal',Arial,sans-serif;box-sizing:border-box}
+.female-extra .extra-cover{position:absolute;top:13.7%;left:11%;width:78%;height:27%;z-index:1;background:linear-gradient(130deg,#f7eaf8,#f8e8f5 60%,#f9edf7);border-radius:8px}
+.female-extra .extra-title{position:absolute;top:14.6%;right:21%;width:58%;height:9%;z-index:2;border-radius:45px;background:linear-gradient(180deg,#a56db1,#834a96);color:#fff;border:3px solid #f4d99b;box-shadow:0 0 0 2px #b47c9e;font-family:'Tajawal',Arial,sans-serif;font-size:clamp(18px,3.5vw,29px);font-weight:800}
+.female-extra .extra-title::before,.female-extra .extra-title::after{content:'❖';position:absolute;top:50%;transform:translateY(-50%);color:#d4a23d;font-size:32px;text-shadow:0 1px #fff}
+.female-extra .extra-title::before{right:-26px}.female-extra .extra-title::after{left:-26px}
+.female-extra .extra-fields{top:34%;z-index:4}
 .female-extra .extra-remove{position:absolute;top:4px;left:4px;z-index:9;background:#fff;color:#a00040;border:1px solid #a00040;border-radius:6px;padding:2px 9px;font-size:22px;line-height:1.2;cursor:pointer}
 @media print{
 @page{size:A4 portrait;margin:0}
