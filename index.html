@@ -1,27 +1,17 @@
-<!doctype html>
-<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ملف الشواهد والإنجاز</title>
-<style>html,body{margin:0;padding:0;width:100%;min-height:100%;overflow-x:hidden;background:#fff}#portfolio{display:block;width:100%;height:100vh;border:0}#notice{font:16px Arial,sans-serif;text-align:center;padding:20px}</style></head>
-<body><div id="notice">جارٍ تحميل ملف الشواهد والإنجاز…</div><iframe id="portfolio" title="ملف الشواهد والإنجاز" src="./portfolio-original-23.html?v=20261122" style="display:none"></iframe>
-<script>
-(function(){
- const frame=document.getElementById('portfolio'),notice=document.getElementById('notice');
- frame.addEventListener('load',function(){
-   try{
-     const doc=frame.contentDocument;
-     if(!doc||!doc.body)throw Error('تعذر الوصول إلى الملف');
-     if(!doc.querySelector('script[data-female-extras]')){
-       const script=doc.createElement('script');
-       script.src='./female-extra-direct.js?v=20261122-direct1';
-       script.dataset.femaleExtras='1';
-       script.onload=()=>{try{doc.defaultView.dispatchEvent(new Event('resize'))}catch(e){}};
-       script.onerror=()=>{notice.textContent='تعذر تحميل الصفحات الإضافية';notice.style.display='block'};
-       doc.body.appendChild(script);
-     }
-     notice.style.display='none';frame.style.display='block';
-     const resize=()=>{try{const h=Math.max(doc.documentElement.scrollHeight,doc.body.scrollHeight,window.innerHeight);frame.style.height=h+'px'}catch(e){}};
-     resize();new ResizeObserver(resize).observe(doc.body);
-     setTimeout(resize,700);setTimeout(resize,2000);
-   }catch(e){notice.textContent='تعذر فتح الملف: '+e.message;notice.style.display='block'}
- });
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ملف الشواهد والإنجاز النسائي</title></head><body><p id="loading" style="font:18px Arial;text-align:center;padding:3rem">جارٍ تحميل ملف الشواهد والإنجاز…</p><script>
+(async function(){
+ try{
+  const [original,extra]=await Promise.all([
+   fetch('./portfolio-original-23.html?v=20261122-28',{cache:'no-store'}),
+   fetch('./female-extra-direct.js?v=20261122-28',{cache:'no-store'})
+  ]);
+  if(!original.ok||!extra.ok)throw Error('تعذر تحميل ملف الصفحات');
+  let html=await original.text(),js=await extra.text();
+  if(!html.includes('id="pages"')&&!html.includes("id='pages'"))throw Error('تعذر تحديد موضع الصفحات الأصلية');
+  const injected='<script data-female-direct>\n'+js.replace(/<\\/script/gi,'<\\/script')+'\n<\\/script>';
+  if(/<\\/body\\s*>/i.test(html))html=html.replace(/<\\/body\\s*>/i,injected+'</body>');
+  else html+=injected;
+  document.open();document.write(html);document.close();
+ }catch(e){document.getElementById('loading').textContent='تعذر فتح الملف: '+e.message;console.error(e)}
 })();
 </script></body></html>
