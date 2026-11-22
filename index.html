@@ -11,7 +11,7 @@
      if(!doc||!doc.body)throw Error('تعذر الوصول إلى الملف');
      if(!doc.querySelector('script[data-female-extras]')){
        const script=doc.createElement('script');
-       script.src='./female-extra-pages.js?v=20261122-fix2';
+       script.src='./female-extra-pages.js?v=20261122-fix3';
        script.dataset.femaleExtras='1';
        script.onload=()=>{try{doc.defaultView.dispatchEvent(new Event('resize'))}catch(e){}};
        script.onerror=()=>{notice.textContent='تعذر تحميل الصفحات الإضافية';notice.style.display='block'};
