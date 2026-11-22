@@ -52,3 +52,6 @@ observer.observe(document.body,{childList:true,subtree:true});update();window.ad
 })();
 /* Load the five supplemental portfolio pages without modifying the large original index.html. */
 (()=>{if(document.querySelector('script[data-female-extras-loader]'))return;const s=document.createElement('script');s.src='./female-extra-pages.js';s.dataset.femaleExtrasLoader='true';document.body.appendChild(s)})();
+
+/* Optional cloud publishing loader; original page layout unchanged. */
+(()=>{if(document.querySelector('script[data-cloud-share-loader]'))return;const s=document.createElement('script');s.src='./cloud-share-bridge.js?v=20261122';s.defer=true;s.dataset.cloudShareLoader='true';document.body.appendChild(s)})();
