@@ -8,7 +8,7 @@
   if(!original.ok||!extra.ok)throw Error('تعذر تحميل ملف الصفحات');
   let html=await original.text(),js=await extra.text();
   if(!html.includes('id="pages"')&&!html.includes("id='pages'"))throw Error('تعذر تحديد موضع الصفحات الأصلية');
-  const injected='<script data-female-direct>\n'+js.replaceAll('</scr'+'ipt>','<\\/script>')+'\n<\\/script>';
+  const injected='<script data-female-direct>\n'+js+'\n</scr'+'ipt>';
   if(html.includes('</body>'))html=html.replace('</body>',injected+'</body>');
   else html+=injected;
   document.open();document.write(html);document.close();
