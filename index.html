@@ -4,7 +4,7 @@ try{
  const response=await fetch('./portfolio-original-23.html',{cache:'no-store'});
  if(!response.ok)throw Error('تعذر تحميل الصفحات الأصلية');
  let html=await response.text();
- const injection='<script src="./female-extra-pages.js?v=restore28-20261122" defer><\/script>';
+ const injection='<script src="./female-extra-pages.js?v=restore28-20261122-2222"><\/script>';
  html=html.replace(/<\/body\s*>/i,injection+'</body>');
  document.open();document.write(html);document.close();
 }catch(err){document.getElementById('loading').textContent='تعذر تحميل الملف: '+err.message;}
