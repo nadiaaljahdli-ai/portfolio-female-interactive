@@ -2,8 +2,8 @@
 (async function(){
  try{
   const [original,extra]=await Promise.all([
-   fetch('./portfolio-original-23.html?v=20261122-28',{cache:'no-store'}),
-   fetch('./female-extra-direct.js?v=20261122-28',{cache:'no-store'})
+   fetch('./portfolio-original-23.html?v=20261122-clean28',{cache:'no-store'}),
+   fetch('./female-extra-direct.js?v=20261122-clean28',{cache:'no-store'})
   ]);
   if(!original.ok||!extra.ok)throw Error('تعذر تحميل ملف الصفحات');
   let html=await original.text(),js=await extra.text();
