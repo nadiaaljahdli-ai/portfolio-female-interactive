@@ -11,7 +11,9 @@ else for(let i=0;i<2;i++){const slot=document.createElement('div');slot.classNam
 sheet.append(pg);if(!printing){const cap=document.createElement('div');cap.className='caption';cap.textContent=def.title;sheet.append(cap);if(!def.fields){const bar=document.createElement('div');bar.className='controls';const clear=document.createElement('button');clear.textContent='حذف صور الصفحة';clear.onclick=()=>{if(!confirm('حذف صور هذه الصفحة؟'))return;extra[def.id]={};persistExtra();mount()};bar.append(clear);sheet.append(bar)}}return sheet}
 function ensureRemove(slot,id,i){let b=slot.querySelector('.extra-remove');if(!b){b=document.createElement('button');b.type='button';b.className='extra-remove';b.textContent='×';b.title='حذف الصورة';b.setAttribute('aria-label','حذف الصورة');b.onclick=e=>{e.stopPropagation();if(!confirm('حذف هذه الصورة؟'))return;const r=extra[id]||{};if(r.images)r.images[i]=null;extra[id]=r;persistExtra();slot.querySelector('img')?.remove();slot.classList.add('empty');b.remove()};slot.append(b)}}
 function mount(){const pages=document.getElementById('pages');if(!pages)return;pages.querySelectorAll('.female-extra').forEach(x=>x.remove());const sheets=[...pages.querySelectorAll(':scope > .sheet:not(.female-extra)')];if(sheets.length<23)return;const personal=build(defs[0]);sheets[1].after(personal);const closing=sheets[22];defs.slice(1).forEach(def=>closing.before(build(def)));document.getElementById('status')?.setAttribute('title','٢٨ صفحة: ٢٣ أصلية و٥ إضافية')}
-const previousRender=render;render=function(){previousRender();mount()};mount();
+// Avoid assigning to the original renderer (which may be a const).
+mount();
+setInterval(()=>{const pages=document.getElementById('pages');if(pages&&pages.querySelectorAll(':scope > .sheet:not(.female-extra)').length>=23&&pages.querySelectorAll(':scope > .female-extra').length!==5)mount()},1200);
 // Recover additional sheets if the original page renderer finishes after this script.
 document.addEventListener('DOMContentLoaded',()=>{mount();setTimeout(mount,350);setTimeout(mount,1200)},{once:true});
 const repairStyle=document.createElement('style');repairStyle.textContent=`
